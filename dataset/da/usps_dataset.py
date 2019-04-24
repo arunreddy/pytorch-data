@@ -12,23 +12,23 @@ import urllib
 import numpy as np
 import torch
 import torch.utils.data as data
-from torchvision import datasets, transforms
+
 from dataset.utils import get_raw_data_dir
 
 
 class USPS(data.Dataset):
   """USPS Dataset.
 
-  Args:
-      root (string): Root directory of dataset where dataset file exist.
-      train (bool, optional): If True, resample from dataset randomly.
-      download (bool, optional): If true, downloads the dataset
-          from the internet and puts it in root directory.
-          If dataset is already downloaded, it is not downloaded again.
-      transform (callable, optional): A function/transform that takes in
-          an PIL image and returns a transformed version.
-          E.g, ``transforms.RandomCrop``
-  """
+Args:
+    root (string): Root directory of dataset where dataset file exist.
+    train (bool, optional): If True, resample from dataset randomly.
+    download (bool, optional): If true, downloads the dataset
+        from the internet and puts it in root directory.
+        If dataset is already downloaded, it is not downloaded again.
+    transform (callable, optional): A function/transform that takes in
+        an PIL image and returns a transformed version.
+        E.g, ``transforms.RandomCrop``
+"""
 
   url = "https://raw.githubusercontent.com/mingyuliutw/CoGAN/master/cogan_pytorch/data/uspssample/usps_28x28.pkl"
 
@@ -49,28 +49,28 @@ class USPS(data.Dataset):
     if download:
       self.download()
     if not self._check_exists():
-      raise RuntimeError("Dataset not found." +
-                         " You can use download=True to download it")
+      raise RuntimeError(
+        "Dataset not found." + " You can use download=True to download it"
+      )
 
     self.train_data, self.train_labels = self.load_samples()
     if self.train:
       total_num_samples = self.train_labels.shape[0]
       indices = np.arange(total_num_samples)
       np.random.shuffle(indices)
-      self.train_data = self.train_data[indices[0:self.dataset_size], ::]
-      self.train_labels = self.train_labels[indices[0:self.dataset_size]]
+      self.train_data = self.train_data[indices[0: self.dataset_size], ::]
+      self.train_labels = self.train_labels[indices[0: self.dataset_size]]
     self.train_data *= 255.0
-    self.train_data = self.train_data.transpose(
-      (0, 2, 3, 1))  # convert to HWC
+    self.train_data = self.train_data.transpose((0, 2, 3, 1))  # convert to HWC
 
   def __getitem__(self, index):
     """Get images and target for data loader.
 
-    Args:
-        index (int): Index
-    Returns:
-        tuple: (image, target) where target is index of the target class.
-    """
+Args:
+    index (int): Index
+Returns:
+    tuple: (image, target) where target is index of the target class.
+"""
     img, label = self.train_data[index, ::], self.train_labels[index]
     if self.transform is not None:
       img = self.transform(img)
